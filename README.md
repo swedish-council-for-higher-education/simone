@@ -67,22 +67,18 @@ public SimOne publish() {
 
 ## Requirements
 
-* Java 17
+* Java 21
 
 * Java Microprofile 6.0 compatible server (Tested on Quarkus 3)
 
-* Datasource, by default uses a Apache Derby data source. The Datasource must be initialized with the Flyway migration located on the classpath.
+* Datasource, compatible with Apache Derby. The Datasource must be initialized with the Flyway migration located on the classpath.
 
 ## Build
 
 ```bash
-mvn package
+./mvnw install
 ```
-Release the SimOne jar and Docker image
 
-```bash
-mvn release:prepare release:perform
-```
 ## Documentation
 
 ### Admin API
