@@ -12,7 +12,7 @@
         <version.jdom>1.0</version.jdom>
         <version.rome>1.0.0</version.rome>
         <version.springframework>6.0.13</version.springframework>
-        <version.derby>10.15.2.0</version.derby>
+        <version.derby>10.17.1.0</version.derby>
     </properties>
     <dependencies>
 
