@@ -2,7 +2,7 @@ name: Publish to GitHub Packages Apache Maven
 
 on:
   release:
-    types: [created]
+    types: [created, published]
 
 jobs:
   build:
