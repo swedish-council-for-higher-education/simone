@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import jakarta.transaction.Transactional;
-
 import se.uhr.simone.core.feed.entity.DerbyFeedRepository;
 
 public class FeedPublisher {
@@ -18,8 +16,16 @@ public class FeedPublisher {
 		this.simFeedRepository = simFeedRepository;
 	}
 
-	@Transactional
-	public void publish(AtomEntry atomEntry) {
+    /**
+     * Publish an entry on the feed.
+     *
+     * @param atomEntry The entry to publish
+     *
+     * @apiNote
+     * This method must run in a transaction.
+     */
+
+    public void publish(AtomEntry atomEntry) {
 		if (!blocked) {
 			simFeedRepository.saveAtomEntry(convert(atomEntry));
 		}

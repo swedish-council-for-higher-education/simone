@@ -14,7 +14,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>21</maven.compiler.release>
-        <revision>5.0.0-SNAPSHOT</revision>
+        <revision>5.0.2-SNAPSHOT</revision>
 
         <version.jupiter>5.10.0</version.jupiter>
         <version.mockito>5.6.0</version.mockito>
@@ -74,13 +74,6 @@
                 <groupId>jakarta.ws.rs</groupId>
                 <artifactId>jakarta.ws.rs-api</artifactId>
                 <version>3.1.0</version>
-                <scope>provided</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>jakarta.transaction</groupId>
-                <artifactId>jakarta.transaction-api</artifactId>
-                <version>2.0.1</version>
                 <scope>provided</scope>
             </dependency>
 
