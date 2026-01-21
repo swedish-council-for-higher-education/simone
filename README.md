@@ -2,7 +2,7 @@
 
 Base container for SimOne. SimOne is a simple simulator for REST and FEED based services.
 
-This projects builds a jar that constitutes core simulator functionality and is meant to be included in a Java EE 8 server that is built by the final simulator.
+This projects builds a jar that constitutes core simulator functionality and is meant to be included in a Java EE 10 server that is built by the final simulator.
 
 See [SimOne-Example](https://github.com/swedish-council-for-higher-education/simone-example) for a starting point to build a simulator.
 
@@ -46,7 +46,7 @@ public AdminResource getAdminResource() {
 }
 ```
 
-Publish a event on the feed.
+Publish an event on the feed.
 
 ```Java
 
@@ -68,6 +68,8 @@ public SimOne publish() {
 ## Requirements
 
 * Java 21
+
+* Some methods (specified in @apiNote) must be called in a transaction.
 
 * Java Microprofile 6.0 compatible server (Tested on Quarkus 3)
 
