@@ -24,7 +24,7 @@ public class AtomFeedDAO {
 	public void insert(AtomFeed atomFeed) {
 		StringBuilder sql = new StringBuilder();
 		sql.append(
-				"INSERT INTO ATOM_FEED (FEED_ID, NEXT_FEED_ID, PREV_FEED_ID, FEED_XML) VALUES (?,?,?, XMLPARSE( DOCUMENT CAST(? AS CLOB(1M)) PRESERVE WHITESPACE))");
+				"INSERT INTO ATOM_FEED (FEED_ID, NEXT_FEED_ID, PREV_FEED_ID, FEED_XML) VALUES (?,?,?,?)");
 		jdbcTemplate.update(sql.toString(), atomFeed.getId(), atomFeed.getNextFeedId(), atomFeed.getPreviousFeedId(),
 				atomFeed.getXml());
 	}
@@ -32,7 +32,7 @@ public class AtomFeedDAO {
 	public int update(AtomFeed atomFeed) {
 		StringBuilder sql = new StringBuilder();
 		sql.append(
-				"UPDATE ATOM_FEED SET NEXT_FEED_ID=?, PREV_FEED_ID=?, FEED_XML=XMLPARSE( DOCUMENT CAST(? AS CLOB(1M)) PRESERVE WHITESPACE) WHERE FEED_ID=?");
+				"UPDATE ATOM_FEED SET NEXT_FEED_ID=?, PREV_FEED_ID=?, FEED_XML=? WHERE FEED_ID=?");
 		return jdbcTemplate.update(sql.toString(), atomFeed.getNextFeedId(), atomFeed.getPreviousFeedId(), atomFeed.getXml(),
 				atomFeed.getId());
 	}
@@ -40,14 +40,14 @@ public class AtomFeedDAO {
 	public AtomFeed fetchBy(long id) {
 		StringBuilder sql = new StringBuilder();
 		sql.append(
-				"SELECT FEED_ID, NEXT_FEED_ID, PREV_FEED_ID, XMLSERIALIZE(FEED_XML AS CLOB(1M)) AS FEED_XML FROM ATOM_FEED WHERE FEED_ID=?");
+				"SELECT FEED_ID, NEXT_FEED_ID, PREV_FEED_ID, FEED_XML AS FEED_XML FROM ATOM_FEED WHERE FEED_ID=?");
 		return jdbcTemplate.queryForObject(sql.toString(), new AtomFeedRowMapper(), id);
 	}
 
 	public AtomFeed fetchRecent() {
 		StringBuilder sql = new StringBuilder();
 		sql.append(
-				"SELECT F.FEED_ID, F.NEXT_FEED_ID, F.PREV_FEED_ID, XMLSERIALIZE(F.FEED_XML AS CLOB(1M)) AS FEED_XML FROM ATOM_FEED F ORDER BY F.FEED_ID DESC FETCH FIRST 1 ROWS ONLY");
+				"SELECT F.FEED_ID, F.NEXT_FEED_ID, F.PREV_FEED_ID, F.FEED_XML AS FEED_XML FROM ATOM_FEED F ORDER BY F.FEED_ID DESC FETCH FIRST 1 ROWS ONLY");
 		return jdbcTemplate.queryForObject(sql.toString(), new AtomFeedRowMapper());
 	}
 
@@ -60,7 +60,7 @@ public class AtomFeedDAO {
 
 	public int saveAtomFeedXml(long feedId, String xml) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("UPDATE ATOM_FEED SET FEED_XML=XMLPARSE( DOCUMENT CAST(? AS CLOB(1M)) PRESERVE WHITESPACE) WHERE FEED_ID=?");
+		sql.append("UPDATE ATOM_FEED SET FEED_XML=? WHERE FEED_ID=?");
 		return jdbcTemplate.update(sql.toString(), xml, feedId);
 	}
 

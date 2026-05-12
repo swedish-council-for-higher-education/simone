@@ -7,23 +7,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import se.uhr.simone.atom.feed.server.entity.AbstractFeedRepository;
-import se.uhr.simone.atom.feed.server.entity.AtomFeedDAO;
 import se.uhr.simone.core.entity.SqlScriptRunner;
 
-public class DerbyFeedRepository extends AbstractFeedRepository {
+public class SimoneFeedRepository extends AbstractFeedRepository {
 
-	private static final Logger LOG = LoggerFactory.getLogger(DerbyFeedRepository.class);
+	private static final Logger LOG = LoggerFactory.getLogger(SimoneFeedRepository.class);
 
 	private final DataSource dataSource;
 
-	public DerbyFeedRepository(DataSource dataSource) {
+	public SimoneFeedRepository(DataSource dataSource) {
 		super(dataSource);
 		this.dataSource = dataSource;
-	}
-
-	@Override
-	public AtomFeedDAO createAtomFeedDAO(JdbcTemplate jdbcTemplate) {
-		return new DerbyAtomFeedDAO(jdbcTemplate);
 	}
 
 	public Long getNextSortOrder() {
@@ -31,7 +25,7 @@ public class DerbyFeedRepository extends AbstractFeedRepository {
 
 		String sql = "SELECT COALESCE(MAX(SORT_ORDER),0) FROM ATOM_ENTRY";
 
-		return jdbcTemplate.queryForObject(sql, Long.class) + Long.valueOf(1);
+		return jdbcTemplate.queryForObject(sql, Long.class) + 1L;
 	}
 
 	public void clear() {

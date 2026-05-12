@@ -4,15 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import se.uhr.simone.core.feed.entity.DerbyFeedRepository;
+import se.uhr.simone.core.feed.entity.SimoneFeedRepository;
 
 public class FeedPublisher {
 
-	private final DerbyFeedRepository simFeedRepository;
+	private final SimoneFeedRepository simFeedRepository;
 
 	private boolean blocked = false;
 
-	public FeedPublisher(DerbyFeedRepository simFeedRepository) {
+	public FeedPublisher(SimoneFeedRepository simFeedRepository) {
 		this.simFeedRepository = simFeedRepository;
 	}
 

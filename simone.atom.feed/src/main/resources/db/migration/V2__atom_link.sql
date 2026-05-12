@@ -12,5 +12,5 @@ ALTER TABLE ATOM_LINK
                 (ENTRY_ID)
         ON DELETE CASCADE
         ON UPDATE RESTRICT
-        ENFORCED;
+        ;
 
