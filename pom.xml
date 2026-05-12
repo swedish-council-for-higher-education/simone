@@ -16,7 +16,7 @@
         <maven.compiler.release>21</maven.compiler.release>
         <revision>5.1.0-SNAPSHOT</revision>
 
-        <version.jupiter>5.10.0</version.jupiter>
+        <version.jupiter>6.0.3</version.jupiter>
         <version.mockito>5.23.0</version.mockito>
         <version.resteasy>6.2.12.Final</version.resteasy>
         <version.flyway>11.20.2</version.flyway>
