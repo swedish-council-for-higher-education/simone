@@ -28,6 +28,7 @@ public class SimoneFeedRepository extends AbstractFeedRepository {
 		return jdbcTemplate.queryForObject(sql, Long.class) + 1L;
 	}
 
+	@Override
 	public void clear() {
 		LOG.info("delete all tables");
 		SqlScriptRunner runner = new SqlScriptRunner(new JdbcTemplate(dataSource));

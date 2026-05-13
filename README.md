@@ -73,7 +73,7 @@ public SimOne publish() {
 
 * Java Microprofile 6.0 compatible server (Tested on Quarkus 3)
 
-* Datasource, compatible with Apache Derby. The Datasource must be initialized with the Flyway migration located on the classpath.
+* A H2 Datasource. The Datasource must be initialized with the Flyway migration located on the classpath.
 
 ## Build
 
