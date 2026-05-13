@@ -90,10 +90,10 @@ public class FeedResource {
 		String uid = UUID.randomUUID().toString();
 
 		Long nextSortOrder = simone.getFeedRepository().getNextSortOrder();
-
 		AtomEntry.Build builder = AtomEntry.builder()
 				.withAtomEntryId(uid)
 				.withSortOrder(nextSortOrder)
+
 				.withSubmittedNow()
 				.withContent(se.uhr.simone.atom.feed.server.entity.Content.builder()
 						.withValue(event.getContent())

@@ -6,7 +6,7 @@ import se.uhr.simone.atom.feed.server.control.FeedConverter;
 import se.uhr.simone.atom.feed.server.control.FeedCreator;
 import se.uhr.simone.atom.feed.server.control.FeedXmlCreator;
 import se.uhr.simone.core.feed.control.FeedPublisher;
-import se.uhr.simone.core.feed.entity.DerbyFeedRepository;
+import se.uhr.simone.core.feed.entity.SimoneFeedRepository;
 
 public class SimOne {
 
@@ -16,12 +16,12 @@ public class SimOne {
 
 	private final FeedCreator feedCreator;
 	private final FeedXmlCreator feedXmlCreator;
-	private final DerbyFeedRepository feedRepository;
+	private final SimoneFeedRepository feedRepository;
 	private final FeedPublisher feedPublisher;
 
 	private final FeedConverter feedConverter;
 
-	public SimOne(String name, URI feedBaseURI, DerbyFeedRepository feedRepository, Runnable clearDatabaseFunction) {
+	public SimOne(String name, URI feedBaseURI, SimoneFeedRepository feedRepository, Runnable clearDatabaseFunction) {
 		this.name = name;
 		this.feedBaseURI = feedBaseURI;
 		this.feedRepository = feedRepository;
@@ -57,7 +57,7 @@ public class SimOne {
 		return feedConverter;
 	}
 
-	public DerbyFeedRepository getFeedRepository() {
+	public SimoneFeedRepository getFeedRepository() {
 		return feedRepository;
 	}
 
@@ -88,7 +88,7 @@ public class SimOne {
 		private String name;
 
 		private URI feedBaseURI;
-		private DerbyFeedRepository feedRepository;
+		private SimoneFeedRepository feedRepository;
 		private Runnable clearDatabaseFunction = () -> {
 		};
 
@@ -104,7 +104,7 @@ public class SimOne {
 			return this;
 		}
 
-		public SimOneBuilder withFeedRepository(DerbyFeedRepository feedRepository) {
+		public SimOneBuilder withFeedRepository(SimoneFeedRepository feedRepository) {
 			this.feedRepository = feedRepository;
 			return this;
 		}

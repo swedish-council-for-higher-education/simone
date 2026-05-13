@@ -211,7 +211,7 @@ public class AtomEntry implements Serializable {
 
 	public interface AtomEntrySortOrderBuilder {
 
-		public SubmittedBuilder withSortOrder(Long atomEntryEventId);
+		public SubmittedBuilder withSortOrder(Long order);
 	}
 
 	public interface SubmittedBuilder {

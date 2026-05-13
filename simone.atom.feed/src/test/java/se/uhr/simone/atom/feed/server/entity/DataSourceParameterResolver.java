@@ -5,8 +5,8 @@ import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
-import org.apache.derby.jdbc.EmbeddedDataSource;
 import org.flywaydb.core.Flyway;
+import org.h2.jdbcx.JdbcDataSource;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ParameterContext;
@@ -24,9 +24,9 @@ public class DataSourceParameterResolver implements ParameterResolver, AfterEach
 	@Override
 	public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext)
 		throws ParameterResolutionException {
-		EmbeddedDataSource ds = new EmbeddedDataSource();
-		ds.setDatabaseName("memory:test");
-		ds.setCreateDatabase("create");
+
+		JdbcDataSource ds = new JdbcDataSource();
+		ds.setURL("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
 		Flyway flyway = Flyway.configure().dataSource(ds).load();
 		flyway.migrate();
 		return ds;
@@ -35,10 +35,9 @@ public class DataSourceParameterResolver implements ParameterResolver, AfterEach
 	@Override
 	public void afterEach(ExtensionContext context) throws Exception {
 		try {
-			DriverManager.getConnection("jdbc:derby:memory:test;drop=true");
+			DriverManager.getConnection("jdbc:h2:mem:test;INIT=DROP ALL OBJECTS");
 		} catch (SQLException e) {
 			// empty			
 		}
 	}
-
 }

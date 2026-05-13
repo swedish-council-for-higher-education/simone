@@ -12,7 +12,6 @@
         <version.jdom>1.0</version.jdom>
         <version.rome>1.0.0</version.rome>
         <version.springframework>7.0.7</version.springframework>
-        <version.derby>10.17.1.0</version.derby>
     </properties>
     <dependencies>
 
@@ -43,49 +42,28 @@
         <!-- Test dependencies -->
 
         <dependency>
-            <groupId>org.apache.derby</groupId>
-            <artifactId>derby</artifactId>
-            <version>${version.derby}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.derby</groupId>
-            <artifactId>derbytools</artifactId>
-            <version>${version.derby}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.derby</groupId>
-            <artifactId>derbyshared</artifactId>
-            <version>${version.derby}</version>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>2.4.240</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
+            <artifactId>slf4j-nop</artifactId>
+            <version>2.0.17</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-core</artifactId>
-            <version>${version.resteasy}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
-            <version>${version.flyway}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-database-derby</artifactId>
             <version>${version.flyway}</version>
             <scope>test</scope>
         </dependency>
