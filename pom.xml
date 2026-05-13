@@ -14,8 +14,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>21</maven.compiler.release>
-        <revision>6.0.0-SNAPSHOT</revision>
-
+        <revision>6.0.0-rc.1</revision>
         <version.mockito>5.23.0</version.mockito>
         <version.flyway>11.20.2</version.flyway>
     </properties>
