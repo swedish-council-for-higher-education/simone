@@ -10,59 +10,40 @@ import java.util.Optional;
 
 public class AtomFeedDAO {
 
-	private JdbcTemplate jdbcTemplate;
+	private final JdbcTemplate jdbcTemplate;
 
 	public AtomFeedDAO(JdbcTemplate jdbcTemplate) {
 		this.jdbcTemplate = jdbcTemplate;
 	}
 
 	public boolean exists(long id) {
-		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT 1 FROM ATOM_FEED WHERE FEED_ID=?");
-		return jdbcTemplate.resultsExists(sql.toString(), id);
+        return jdbcTemplate.resultsExists("SELECT 1 FROM ATOM_FEED WHERE FEED_ID=?", id);
 	}
 
 	public void insert(AtomFeed atomFeed) {
-		StringBuilder sql = new StringBuilder();
-		sql.append(
-				"INSERT INTO ATOM_FEED (FEED_ID, NEXT_FEED_ID, PREV_FEED_ID, FEED_XML) VALUES (?,?,?,?)");
-		jdbcTemplate.update(sql.toString(), atomFeed.getId(), atomFeed.getNextFeedId(), atomFeed.getPreviousFeedId(),
+        jdbcTemplate.update("INSERT INTO ATOM_FEED (FEED_ID, NEXT_FEED_ID, PREV_FEED_ID, FEED_XML) VALUES (?,?,?,?)", atomFeed.getId(), atomFeed.getNextFeedId(), atomFeed.getPreviousFeedId(),
 				atomFeed.getXml());
 	}
 
 	public int update(AtomFeed atomFeed) {
-		StringBuilder sql = new StringBuilder();
-		sql.append(
-				"UPDATE ATOM_FEED SET NEXT_FEED_ID=?, PREV_FEED_ID=?, FEED_XML=? WHERE FEED_ID=?");
-		return jdbcTemplate.update(sql.toString(), atomFeed.getNextFeedId(), atomFeed.getPreviousFeedId(), atomFeed.getXml(),
+        return jdbcTemplate.update("UPDATE ATOM_FEED SET NEXT_FEED_ID=?, PREV_FEED_ID=?, FEED_XML=? WHERE FEED_ID=?", atomFeed.getNextFeedId(), atomFeed.getPreviousFeedId(), atomFeed.getXml(),
 				atomFeed.getId());
 	}
 
 	public Optional<AtomFeed> fetchBy(long id) {
-		StringBuilder sql = new StringBuilder();
-		sql.append(
-				"SELECT FEED_ID, NEXT_FEED_ID, PREV_FEED_ID, FEED_XML AS FEED_XML FROM ATOM_FEED WHERE FEED_ID=?");
-		return jdbcTemplate.queryForObject(sql.toString(), new AtomFeedRowMapper(), id);
+        return jdbcTemplate.queryForObject("SELECT FEED_ID, NEXT_FEED_ID, PREV_FEED_ID, FEED_XML AS FEED_XML FROM ATOM_FEED WHERE FEED_ID=?", new AtomFeedRowMapper(), id);
 	}
 
 	public Optional<AtomFeed> fetchRecent() {
-		StringBuilder sql = new StringBuilder();
-		sql.append(
-				"SELECT F.FEED_ID, F.NEXT_FEED_ID, F.PREV_FEED_ID, F.FEED_XML AS FEED_XML FROM ATOM_FEED F ORDER BY F.FEED_ID DESC FETCH FIRST 1 ROWS ONLY");
-		return jdbcTemplate.queryForObject(sql.toString(), new AtomFeedRowMapper());
+        return jdbcTemplate.queryForObject("SELECT F.FEED_ID, F.NEXT_FEED_ID, F.PREV_FEED_ID, F.FEED_XML AS FEED_XML FROM ATOM_FEED F ORDER BY F.FEED_ID DESC FETCH FIRST 1 ROWS ONLY", new AtomFeedRowMapper());
 	}
 
 	public List<AtomFeed> getFeedsWithoutXml() {
-		StringBuilder sql = new StringBuilder();
-		sql.append(
-				"SELECT F.FEED_ID, F.NEXT_FEED_ID, F.PREV_FEED_ID, CAST(NULL as CHAR) AS FEED_XML FROM ATOM_FEED F WHERE F.FEED_XML_IS_NULL = 1 AND F.NEXT_FEED_ID IS NOT NULL");
-		return jdbcTemplate.query(sql.toString(), new AtomFeedRowMapper());
+        return jdbcTemplate.query("SELECT F.FEED_ID, F.NEXT_FEED_ID, F.PREV_FEED_ID, CAST(NULL as CHAR) AS FEED_XML FROM ATOM_FEED F WHERE F.FEED_XML_IS_NULL = 1 AND F.NEXT_FEED_ID IS NOT NULL", new AtomFeedRowMapper());
 	}
 
 	public int saveAtomFeedXml(long feedId, String xml) {
-		StringBuilder sql = new StringBuilder();
-		sql.append("UPDATE ATOM_FEED SET FEED_XML=? WHERE FEED_ID=?");
-		return jdbcTemplate.update(sql.toString(), xml, feedId);
+        return jdbcTemplate.update("UPDATE ATOM_FEED SET FEED_XML=? WHERE FEED_ID=?", xml, feedId);
 	}
 
 	protected static class AtomFeedRowMapper implements RowMapper<AtomFeed> {

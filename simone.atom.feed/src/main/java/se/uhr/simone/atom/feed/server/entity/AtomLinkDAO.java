@@ -12,34 +12,26 @@ public class AtomLinkDAO {
 
 	static final int MAX_NUM_OF_ENTRIES_TO_RETURN = 10_000;
 
-	private JdbcTemplate jdbcTemplate;
+	private final JdbcTemplate jdbcTemplate;
 
 	public AtomLinkDAO(JdbcTemplate jdbcTemplate) {
 		this.jdbcTemplate = jdbcTemplate;
 	}
 
 	public boolean exists(String atomEntryId) {
-		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT 1 FROM ATOM_LINK WHERE ENTRY_ID = ?");
-		return jdbcTemplate.resultsExists(sql.toString(), atomEntryId);
+        return jdbcTemplate.resultsExists("SELECT 1 FROM ATOM_LINK WHERE ENTRY_ID = ?", atomEntryId);
 	}
 
 	public void insert(String id, AtomLink atomLink) {
-		StringBuilder sql = new StringBuilder();
-		sql.append("INSERT INTO ATOM_LINK (ENTRY_ID, REL, HREF, CONTENT_TYPE) VALUES (?,?,?,?)");
-		jdbcTemplate.update(sql.toString(), id, atomLink.getRel(), atomLink.getHref(), atomLink.getType());
+        jdbcTemplate.update("INSERT INTO ATOM_LINK (ENTRY_ID, REL, HREF, CONTENT_TYPE) VALUES (?,?,?,?)", id, atomLink.getRel(), atomLink.getHref(), atomLink.getType());
 	}
 
 	public void delete(String atomEntryId) {
-		StringBuilder sql = new StringBuilder();
-		sql.append("DELETE FROM ATOM_LINK WHERE ENTRY_ID = ? ");
-		jdbcTemplate.update(sql.toString(), atomEntryId);
+        jdbcTemplate.update("DELETE FROM ATOM_LINK WHERE ENTRY_ID = ? ", atomEntryId);
 	}
 
 	public List<AtomLink> findBy(String atomEntryId) {
-		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT REL, HREF, CONTENT_TYPE FROM ATOM_LINK WHERE ENTRY_ID = ? ");
-		return jdbcTemplate.query(sql.toString(), new AtomLinkRowMapper(), atomEntryId);
+        return jdbcTemplate.query("SELECT REL, HREF, CONTENT_TYPE FROM ATOM_LINK WHERE ENTRY_ID = ? ", new AtomLinkRowMapper(), atomEntryId);
 	}
 
 	private static class AtomLinkRowMapper implements RowMapper<AtomLink> {

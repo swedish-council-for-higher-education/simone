@@ -12,7 +12,7 @@ import se.uhr.simone.atom.feed.utils.jdbc.RowMapper;
 
 public class AtomCategoryDAO {
 
-	private JdbcTemplate jdbcTemplate;
+	private final JdbcTemplate jdbcTemplate;
 
 	public AtomCategoryDAO(JdbcTemplate jdbcTemplate) {
 		this.jdbcTemplate = jdbcTemplate;

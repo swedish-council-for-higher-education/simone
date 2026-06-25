@@ -8,7 +8,7 @@ import java.util.List;
 
 public class AtomAuthorDAO {
 
-	private JdbcTemplate jdbcTemplate;
+	private final JdbcTemplate jdbcTemplate;
 
 	public AtomAuthorDAO(JdbcTemplate jdbcTemplate) {
 		this.jdbcTemplate = jdbcTemplate;
