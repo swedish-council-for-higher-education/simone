@@ -1,7 +1,8 @@
 package se.uhr.simone.atom.feed.server.entity;
 
+import se.uhr.simone.atom.feed.utils.jdbc.JdbcTemplate;
+
 import java.util.List;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 public interface FeedRepository {
 

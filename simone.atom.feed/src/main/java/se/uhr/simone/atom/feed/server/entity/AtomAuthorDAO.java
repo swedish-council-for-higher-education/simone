@@ -1,11 +1,10 @@
 package se.uhr.simone.atom.feed.server.entity;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
+import se.uhr.simone.atom.feed.utils.jdbc.JdbcTemplate;
+import se.uhr.simone.atom.feed.utils.jdbc.ResultSetAdapter;
+import se.uhr.simone.atom.feed.utils.jdbc.RowMapper;
 
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import java.util.List;
 
 public class AtomAuthorDAO {
 
@@ -16,35 +15,26 @@ public class AtomAuthorDAO {
 	}
 
 	public boolean exists(String atomEntryId) {
-		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT 1 FROM ATOM_AUTHOR WHERE ENTRY_ID = ?");
-		return jdbcTemplate.queryForRowSet(sql.toString(), atomEntryId).next();
+        return jdbcTemplate.resultsExists("SELECT 1 FROM ATOM_AUTHOR WHERE ENTRY_ID = ?", atomEntryId);
 	}
 
 	public void insert(String id, Person person) {
-		StringBuilder sql = new StringBuilder();
-		sql.append("INSERT INTO ATOM_AUTHOR (ENTRY_ID, AUTHOR) VALUES (?,?)");
-		jdbcTemplate.update(sql.toString(), id, person.getName());
+        jdbcTemplate.update("INSERT INTO ATOM_AUTHOR (ENTRY_ID, AUTHOR) VALUES (?,?)", id, person.getName());
 	}
 
 	public void delete(String atomEntryId) {
-		StringBuilder sql = new StringBuilder();
-		sql.append("DELETE FROM ATOM_AUTHOR WHERE ENTRY_ID = ? ");
-		jdbcTemplate.update(sql.toString(), atomEntryId);
+        jdbcTemplate.update("DELETE FROM ATOM_AUTHOR WHERE ENTRY_ID = ? ", atomEntryId);
 	}
 
 	public List<Person> findBy(String atomEntryId) {
-		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT AUTHOR FROM ATOM_AUTHOR WHERE ENTRY_ID = ? ");
-		return jdbcTemplate.query(sql.toString(), new AtomAuthorRowMapper(), atomEntryId);
+        return jdbcTemplate.query("SELECT AUTHOR FROM ATOM_AUTHOR WHERE ENTRY_ID = ? ", new AtomAuthorRowMapper(), atomEntryId);
 	}
 
 	private static class AtomAuthorRowMapper implements RowMapper<Person> {
 
 		@Override
-		public Person mapRow(ResultSet rs, int rowNum) throws SQLException {
+		public Person mapRow(ResultSetAdapter rs) {
 			return Person.of(rs.getString("AUTHOR"));
 		}
 	}
-
 }

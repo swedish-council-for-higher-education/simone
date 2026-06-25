@@ -1,11 +1,10 @@
 package se.uhr.simone.atom.feed.server.entity;
 
+import se.uhr.simone.atom.feed.utils.jdbc.JdbcTemplate;
+
 import java.util.List;
 
 import javax.sql.DataSource;
-
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 public abstract class AbstractFeedRepository implements FeedRepository {
 
@@ -104,13 +103,12 @@ public abstract class AbstractFeedRepository implements FeedRepository {
 
 	@Override
 	public AtomFeed getFeedById(long id) {
-		AtomFeed atomFeed = null;
-		try {
-			atomFeed = atomFeedDAO.fetchBy(id);
-		} catch (EmptyResultDataAccessException e) {
-			return atomFeed;
+		AtomFeed atomFeed = atomFeedDAO.fetchBy(id).orElse(null);
+
+		if(atomFeed != null){
+			atomFeed.setEntries(getEntriesForFeed(atomFeed));
 		}
-		atomFeed.setEntries(getEntriesForFeed(atomFeed));
+
 		return atomFeed;
 	}
 
@@ -121,8 +119,11 @@ public abstract class AbstractFeedRepository implements FeedRepository {
 	 */
 	@Override
 	public AtomFeed getRecentFeed() {
-		AtomFeed recent = atomFeedDAO.fetchRecent();
-		recent.setEntries(getEntriesForFeed(recent));
+		var recent = atomFeedDAO.fetchRecent().orElse(null);
+
+		if(recent != null){
+			recent.setEntries(getEntriesForFeed(recent));
+		}
 		return recent;
 	}
 
@@ -158,11 +159,7 @@ public abstract class AbstractFeedRepository implements FeedRepository {
 
 	@Override
 	public String getLatestEntryIdForCategory(AtomCategory category) {
-		try {
-			return atomEntryDAO.getLatestEntryIdForCategory(category);
-		} catch (EmptyResultDataAccessException e) {
-			return null;
-		}
+		return atomEntryDAO.getLatestEntryIdForCategory(category).orElse(null);
 	}
 
 	private List<AtomEntry> getEntriesForFeed(AtomFeed atomFeed) {

@@ -1,8 +1,9 @@
 package se.uhr.simone.core.entity;
 
+import se.uhr.simone.atom.feed.utils.jdbc.JdbcTemplate;
+
 import java.io.InputStream;
 
-import org.springframework.jdbc.core.JdbcTemplate;
 
 public class SqlScriptRunner {
 

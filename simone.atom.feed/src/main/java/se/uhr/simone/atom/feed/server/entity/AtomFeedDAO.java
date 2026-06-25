@@ -1,11 +1,12 @@
 package se.uhr.simone.atom.feed.server.entity;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
+import se.uhr.simone.atom.feed.utils.jdbc.JdbcTemplate;
+import se.uhr.simone.atom.feed.utils.jdbc.ResultSetAdapter;
+import se.uhr.simone.atom.feed.utils.jdbc.RowMapper;
 
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import java.util.List;
+import java.util.Optional;
+
 
 public class AtomFeedDAO {
 
@@ -18,7 +19,7 @@ public class AtomFeedDAO {
 	public boolean exists(long id) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT 1 FROM ATOM_FEED WHERE FEED_ID=?");
-		return jdbcTemplate.queryForRowSet(sql.toString(), id).next();
+		return jdbcTemplate.resultsExists(sql.toString(), id);
 	}
 
 	public void insert(AtomFeed atomFeed) {
@@ -37,14 +38,14 @@ public class AtomFeedDAO {
 				atomFeed.getId());
 	}
 
-	public AtomFeed fetchBy(long id) {
+	public Optional<AtomFeed> fetchBy(long id) {
 		StringBuilder sql = new StringBuilder();
 		sql.append(
 				"SELECT FEED_ID, NEXT_FEED_ID, PREV_FEED_ID, FEED_XML AS FEED_XML FROM ATOM_FEED WHERE FEED_ID=?");
 		return jdbcTemplate.queryForObject(sql.toString(), new AtomFeedRowMapper(), id);
 	}
 
-	public AtomFeed fetchRecent() {
+	public Optional<AtomFeed> fetchRecent() {
 		StringBuilder sql = new StringBuilder();
 		sql.append(
 				"SELECT F.FEED_ID, F.NEXT_FEED_ID, F.PREV_FEED_ID, F.FEED_XML AS FEED_XML FROM ATOM_FEED F ORDER BY F.FEED_ID DESC FETCH FIRST 1 ROWS ONLY");
@@ -70,7 +71,7 @@ public class AtomFeedDAO {
 		}
 
 		@Override
-		public AtomFeed mapRow(ResultSet rs, int rowNum) throws SQLException {
+		public AtomFeed mapRow(ResultSetAdapter rs) {
 			AtomFeed atomFeed = new AtomFeed(rs.getLong("FEED_ID"));
 			long NEXT_FEED_ID = rs.getLong("NEXT_FEED_ID");
 			if (rs.wasNull()) {

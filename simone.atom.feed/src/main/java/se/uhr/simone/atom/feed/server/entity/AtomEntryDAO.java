@@ -1,16 +1,14 @@
 
 package se.uhr.simone.atom.feed.server.entity;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
-
 import se.uhr.simone.atom.feed.server.entity.AtomCategory.Label;
-import se.uhr.simone.atom.feed.utils.TimestampUtil;
+import se.uhr.simone.atom.feed.utils.jdbc.JdbcTemplate;
+import se.uhr.simone.atom.feed.utils.jdbc.ResultSetAdapter;
+import se.uhr.simone.atom.feed.utils.jdbc.RowMapper;
 
 public class AtomEntryDAO {
 
@@ -25,7 +23,7 @@ public class AtomEntryDAO {
 	public boolean exists(String atomEntryId) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT 1 FROM ATOM_ENTRY WHERE ENTRY_ID=? ");
-		return jdbcTemplate.queryForRowSet(sql.toString(), atomEntryId).next();
+		return jdbcTemplate.resultsExists(sql.toString(), atomEntryId);
 	}
 
 	public void insert(AtomEntry atomEntry) {
@@ -34,7 +32,7 @@ public class AtomEntryDAO {
 		sql.append(
 				"INSERT INTO ATOM_ENTRY (ENTRY_ID, ENTRY_CONTENT_TYPE, FEED_ID, SORT_ORDER, SUBMITTED, TITLE, ENTRY_XML, SUMMARY, SUMMARY_CONTENT_TYPE) VALUES (?,?,?,?,?,?,?,?,?)");
 		jdbcTemplate.update(sql.toString(), atomEntry.getAtomEntryId(), atomEntry.getContent().map(getContentType()).orElse(null),
-				atomEntry.getFeedId(), atomEntry.getSortOrder(), TimestampUtil.forUTCColumn(atomEntry.getSubmitted()),
+				atomEntry.getFeedId(), atomEntry.getSortOrder(), atomEntry.getSubmitted(),
 				atomEntry.getTitle(), atomEntry.getContent().map(Content::getValue).orElse(null),
 				atomEntry.getSummary().map(Content::getValue).orElse(null), atomEntry.getSummary().map(getContentType()).orElse(null));
 	}
@@ -42,7 +40,7 @@ public class AtomEntryDAO {
 	public void update(AtomEntry atomEntry) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("UPDATE ATOM_ENTRY SET FEED_ID=?, SUBMITTED=?, TITLE=?, ENTRY_XML=?, ENTRY_CONTENT_TYPE=? WHERE ENTRY_ID=? ");
-		jdbcTemplate.update(sql.toString(), atomEntry.getFeedId(), TimestampUtil.forUTCColumn(atomEntry.getSubmitted()),
+		jdbcTemplate.update(sql.toString(), atomEntry.getFeedId(), atomEntry.getSubmitted(),
 				atomEntry.getTitle(), atomEntry.getContent().map(Content::getValue).orElse(null),
 				atomEntry.getContent().map(getContentType()).orElse(null), atomEntry.getAtomEntryId());
 	}
@@ -51,7 +49,7 @@ public class AtomEntryDAO {
 		return contentType -> contentType.getContentType().orElse(null);
 	}
 
-	public AtomEntry fetchBy(String atomEntryId) {
+	public Optional<AtomEntry> fetchBy(String atomEntryId) {
 		StringBuilder sql = new StringBuilder();
 		sql.append(
 				"SELECT SORT_ORDER, ENTRY_ID, ENTRY_CONTENT_TYPE, FEED_ID, SUBMITTED, TITLE, ENTRY_XML, SUMMARY, SUMMARY_CONTENT_TYPE FROM ATOM_ENTRY WHERE ENTRY_ID = ? ");
@@ -65,7 +63,7 @@ public class AtomEntryDAO {
 		return jdbcTemplate.query(sql.toString(), new AtomEntryRowMapper(), id);
 	}
 
-	public String getLatestEntryIdForCategory(AtomCategory category) {
+	public Optional<String> getLatestEntryIdForCategory(AtomCategory category) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT ");
 		sql.append("SELECT ");
@@ -90,7 +88,7 @@ public class AtomEntryDAO {
 	private static class EntryIdRowmapper implements RowMapper<String> {
 
 		@Override
-		public String mapRow(ResultSet rs, int rowNum) throws SQLException {
+		public String mapRow(ResultSetAdapter rs) {
 			return rs.getString("ENTRY_ID");
 
 		}

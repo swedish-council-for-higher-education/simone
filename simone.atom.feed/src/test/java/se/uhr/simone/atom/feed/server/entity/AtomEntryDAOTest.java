@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -13,9 +14,8 @@ import jakarta.ws.rs.core.MediaType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
+import se.uhr.simone.atom.feed.utils.jdbc.JdbcTemplate;
+import se.uhr.simone.atom.feed.utils.jdbc.PersistenceException;
 
 @ExtendWith(DataSourceParameterResolver.class)
 public class AtomEntryDAOTest {
@@ -55,7 +55,7 @@ public class AtomEntryDAOTest {
 		AtomEntry atomEntry = createAtomEntry();
 		atomEntry.setContent(Content.builder().withValue(xml).withContentType(MediaType.APPLICATION_XML).build());
 
-		assertThatExceptionOfType(DataIntegrityViolationException.class).isThrownBy(() -> {
+		assertThatExceptionOfType(PersistenceException.class).isThrownBy(() -> {
 			atomEntryDAO.insert(atomEntry);
 		});
 	}
@@ -76,16 +76,16 @@ public class AtomEntryDAOTest {
 
 		atomEntryDAO.update(atomEntry);
 
-		AtomEntry fetchedAtomEntry = atomEntryDAO.fetchBy(atomEntry.getAtomEntryId());
+		var fetchedAtomEntry = atomEntryDAO.fetchBy(atomEntry.getAtomEntryId());
 
-		assertThat(fetchedAtomEntry.getContent().get().getValue()).isEqualTo(atomEntry.getContent().get().getValue());
+		assertThat(fetchedAtomEntry).hasValueSatisfying(entry -> {
+			assertThat(entry.getContent().get().getValue()).isEqualTo(atomEntry.getContent().get().getValue());
+		});
 	}
 
 	@Test
 	public void fetchByShouldThrowExceptionWhenNotExisting() {
-		assertThatExceptionOfType(EmptyResultDataAccessException.class).isThrownBy(() -> {
-			atomEntryDAO.fetchBy(UUID.randomUUID().toString());
-		});
+		assertThat(atomEntryDAO.fetchBy(UUID.randomUUID().toString())).isEmpty();
 	}
 
 	@Test
@@ -164,6 +164,27 @@ public class AtomEntryDAOTest {
 			assertThat(entriesForFeed.get(2).getAtomEntryId()).isEqualTo(id1);
 		}
 
+	}
+
+	@Test
+	public void shouldFetchCorrectTimestamp() {
+		atomFeedDAO.insert(new AtomFeed(FIRST_NON_EXISTING_FEED_ID));
+
+		Timestamp ts = Timestamp.from(Instant.parse("2020-01-01T00:00:00Z"));
+
+		String id1 = UUID.randomUUID().toString();
+		atomEntryDAO.insert(AtomEntry.builder()
+				.withAtomEntryId(id1)
+				.withSortOrder(1L)
+				.withSubmitted(ts)
+				.withFeedId(1L)
+				.build());
+
+		List<AtomEntry> entriesForFeed = atomEntryDAO.getAtomEntriesForFeed(1);
+
+		assertThat(entriesForFeed).singleElement().satisfies(e -> {
+			assertThat(e.getSubmitted()).isEqualTo(ts);
+		});
 	}
 
 	@Test

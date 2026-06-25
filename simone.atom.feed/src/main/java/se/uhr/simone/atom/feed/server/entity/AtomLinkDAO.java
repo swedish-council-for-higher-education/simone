@@ -1,11 +1,12 @@
 package se.uhr.simone.atom.feed.server.entity;
 
+import se.uhr.simone.atom.feed.utils.jdbc.JdbcTemplate;
+import se.uhr.simone.atom.feed.utils.jdbc.ResultSetAdapter;
+import se.uhr.simone.atom.feed.utils.jdbc.RowMapper;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 
 public class AtomLinkDAO {
 
@@ -20,7 +21,7 @@ public class AtomLinkDAO {
 	public boolean exists(String atomEntryId) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT 1 FROM ATOM_LINK WHERE ENTRY_ID = ?");
-		return jdbcTemplate.queryForRowSet(sql.toString(), atomEntryId).next();
+		return jdbcTemplate.resultsExists(sql.toString(), atomEntryId);
 	}
 
 	public void insert(String id, AtomLink atomLink) {
@@ -44,7 +45,7 @@ public class AtomLinkDAO {
 	private static class AtomLinkRowMapper implements RowMapper<AtomLink> {
 
 		@Override
-		public AtomLink mapRow(ResultSet rs, int rowNum) throws SQLException {
+		public AtomLink mapRow(ResultSetAdapter rs) {
 			return AtomLink.builder() //
 					.withRel(rs.getString("REL"))
 					.withHref(rs.getString("HREF")) //
