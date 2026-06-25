@@ -24,9 +24,9 @@ public class SimoneFeedRepository extends AbstractFeedRepository {
     public Long getNextSortOrder() {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
-        String sql = "SELECT COALESCE(MAX(SORT_ORDER),0) FROM ATOM_ENTRY";
+        String sql = "SELECT COALESCE(MAX(SORT_ORDER),0) AS NEXT_SORT_ORDER FROM ATOM_ENTRY";
 
-        return jdbcTemplate.queryForObject(sql, rs -> rs.getLong("1")).orElseThrow(() -> new PersistenceException("Can't get sort order")) + 1L;
+        return jdbcTemplate.queryForObject(sql, rs -> rs.getLong("NEXT_SORT_ORDER")).orElseThrow(() -> new PersistenceException("Can't get sort order")) + 1L;
     }
 
     @Override

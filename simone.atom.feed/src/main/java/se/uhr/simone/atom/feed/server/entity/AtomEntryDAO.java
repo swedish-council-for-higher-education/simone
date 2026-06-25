@@ -1,8 +1,7 @@
 
 package se.uhr.simone.atom.feed.server.entity;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 
 import se.uhr.simone.atom.feed.server.entity.AtomCategory.Label;
@@ -11,6 +10,8 @@ import se.uhr.simone.atom.feed.utils.jdbc.ResultSetAdapter;
 import se.uhr.simone.atom.feed.utils.jdbc.RowMapper;
 
 public class AtomEntryDAO {
+
+	private static final TimeZone UTC_TZ = TimeZone.getTimeZone("UTC");
 
 	static final int MAX_NUM_OF_ENTRIES_TO_RETURN = 10_000;
 
@@ -32,7 +33,7 @@ public class AtomEntryDAO {
 		sql.append(
 				"INSERT INTO ATOM_ENTRY (ENTRY_ID, ENTRY_CONTENT_TYPE, FEED_ID, SORT_ORDER, SUBMITTED, TITLE, ENTRY_XML, SUMMARY, SUMMARY_CONTENT_TYPE) VALUES (?,?,?,?,?,?,?,?,?)");
 		jdbcTemplate.update(sql.toString(), atomEntry.getAtomEntryId(), atomEntry.getContent().map(getContentType()).orElse(null),
-				atomEntry.getFeedId(), atomEntry.getSortOrder(), atomEntry.getSubmitted(),
+				atomEntry.getFeedId(), atomEntry.getSortOrder(), toUTCCalendar(atomEntry.getSubmitted()),
 				atomEntry.getTitle(), atomEntry.getContent().map(Content::getValue).orElse(null),
 				atomEntry.getSummary().map(Content::getValue).orElse(null), atomEntry.getSummary().map(getContentType()).orElse(null));
 	}
@@ -40,7 +41,7 @@ public class AtomEntryDAO {
 	public void update(AtomEntry atomEntry) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("UPDATE ATOM_ENTRY SET FEED_ID=?, SUBMITTED=?, TITLE=?, ENTRY_XML=?, ENTRY_CONTENT_TYPE=? WHERE ENTRY_ID=? ");
-		jdbcTemplate.update(sql.toString(), atomEntry.getFeedId(), atomEntry.getSubmitted(),
+		jdbcTemplate.update(sql.toString(), atomEntry.getFeedId(), toUTCCalendar(atomEntry.getSubmitted()),
 				atomEntry.getTitle(), atomEntry.getContent().map(Content::getValue).orElse(null),
 				atomEntry.getContent().map(getContentType()).orElse(null), atomEntry.getAtomEntryId());
 	}
@@ -92,5 +93,11 @@ public class AtomEntryDAO {
 			return rs.getString("ENTRY_ID");
 
 		}
+	}
+
+	private  static Calendar toUTCCalendar(Date date) {
+		Calendar c = Calendar.getInstance(UTC_TZ);
+		c.setTime(date);
+		return c;
 	}
 }

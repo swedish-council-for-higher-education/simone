@@ -6,7 +6,7 @@ import se.uhr.simone.atom.feed.utils.jdbc.RowMapper;
 class AtomEntryRowMapper implements RowMapper<AtomEntry> {
 
 	@Override
-	public AtomEntry mapRow(ResultSetAdapter rs) {
+		public AtomEntry mapRow(ResultSetAdapter rs) {
 
 		Long feedId = rs.getLong("FEED_ID");
 		if (rs.wasNull()) {
@@ -16,7 +16,7 @@ class AtomEntryRowMapper implements RowMapper<AtomEntry> {
 		return AtomEntry.builder() //
 				.withAtomEntryId(rs.getString("ENTRY_ID")) //
 				.withSortOrder(rs.getLong("SORT_ORDER"))
-				.withSubmitted(rs.getTimestamp("SUBMITTED")) // ,
+				.withSubmitted(rs.getTimestampUTC("SUBMITTED")) // ,
 				.withFeedId(feedId) //
 				.withTitle(rs.getString("TITLE")) //
 				.withContent(Content.builder()

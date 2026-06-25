@@ -6,8 +6,12 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 public class ResultSetAdapter implements AutoCloseable {
+
+	private static final TimeZone UTC_TZ = TimeZone.getTimeZone("UTC");
 
 	private final ResultSet resultSet;
 
@@ -53,8 +57,17 @@ public class ResultSetAdapter implements AutoCloseable {
 		return tryGetValue(column, resultSet::getBigDecimal);
 	}
 
-	public Timestamp getTimestamp(String submitted) {
-		return tryGetValue(submitted, resultSet::getTimestamp);
+	public Timestamp getTimestamp(String column) {
+		return tryGetValue(column, resultSet::getTimestamp);
+	}
+
+	public Timestamp getTimestampUTC(String column) {
+		Calendar utcCalendar = Calendar.getInstance(UTC_TZ);
+		try {
+			return resultSet.getTimestamp(column, utcCalendar);
+		} catch (SQLException e) {
+			throw createWrappedException(e);
+		}
 	}
 
 	public Instant getInstant(String column) {
