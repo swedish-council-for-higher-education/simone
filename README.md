@@ -14,7 +14,7 @@ Create a simulator instance:
 @Produces
 @ApplicationScoped
 public SimOne create() {
-    var feedRepository = new DerbyFeedRepository(dataSource);
+    var feedRepository = new SimoneFeedRepository(dataSource);
 
     URI feedBaseUri = UriBuilder.fromUri(properties.baseURI).segment("feed").build();
 
@@ -73,7 +73,7 @@ public SimOne publish() {
 
 * Java Microprofile 6.0 compatible server (Tested on Quarkus 3)
 
-* A H2 Datasource. The Datasource must be initialized with the Flyway migration located on the classpath.
+* An H2 Datasource. The Datasource must be initialized with the Flyway migration located on the classpath.
 
 ## Build
 

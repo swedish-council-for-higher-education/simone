@@ -10,7 +10,7 @@ import jakarta.ws.rs.core.MediaType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.jdbc.core.JdbcTemplate;
+import se.uhr.simone.atom.feed.utils.jdbc.JdbcTemplate;
 
 @ExtendWith(DataSourceParameterResolver.class)
 public class AtomLinkDAOTest {

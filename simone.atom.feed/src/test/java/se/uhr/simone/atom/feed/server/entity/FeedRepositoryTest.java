@@ -11,6 +11,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import jakarta.ws.rs.core.MediaType;
@@ -18,7 +20,6 @@ import jakarta.ws.rs.core.MediaType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.dao.EmptyResultDataAccessException;
 
 @ExtendWith(MockitoExtension.class)
 class FeedRepositoryTest {
@@ -89,8 +90,7 @@ class FeedRepositoryTest {
 
 	@Test
 	void getFeedByIdNotExisting() {
-
-		given(atomFeedDAO.fetchBy(1)).willThrow(new EmptyResultDataAccessException(3));
+		given(atomFeedDAO.fetchBy(1)).willReturn(Optional.empty());
 
 		AtomFeed feed = feedRepository.getFeedById(1);
 		assertThat(feed).isNull();
@@ -103,8 +103,8 @@ class FeedRepositoryTest {
 	void getFeedById() {
 		AtomFeed atomFeed = new AtomFeed(1);
 
-		given(atomFeedDAO.fetchBy(1)).willReturn(atomFeed);
-		given(atomEntryDAO.getAtomEntriesForFeed(1)).willReturn(Arrays.asList(createAtomEntry()));
+		given(atomFeedDAO.fetchBy(1)).willReturn(Optional.of(atomFeed));
+		given(atomEntryDAO.getAtomEntriesForFeed(1)).willReturn(List.of(createAtomEntry()));
 
 		AtomFeed fetchedFeed = feedRepository.getFeedById(1);
 
@@ -117,19 +117,15 @@ class FeedRepositoryTest {
 
 	@Test
 	void getRecentFeedMustExistInDatabase() {
-		given(atomFeedDAO.fetchRecent()).willThrow(new EmptyResultDataAccessException(3));
-
-		assertThatExceptionOfType(EmptyResultDataAccessException.class).isThrownBy(() -> {
-			feedRepository.getRecentFeed();
-		});
-
+		given(atomFeedDAO.fetchRecent()).willReturn(Optional.empty());
+		assertThat(feedRepository.getRecentFeed()).isNull();
 	}
 
 	@Test
 	void getRecentFeed() {
 		AtomFeed atomFeed = new AtomFeed(1);
 
-		given(atomFeedDAO.fetchRecent()).willReturn(atomFeed);
+		given(atomFeedDAO.fetchRecent()).willReturn(Optional.of(atomFeed));
 		given(atomEntryDAO.getAtomEntriesForFeed(1)).willReturn(Arrays.asList(createAtomEntry()));
 
 		AtomFeed fetchedFeed = feedRepository.getRecentFeed();

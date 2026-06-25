@@ -10,11 +10,11 @@ import javax.sql.DataSource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 import se.uhr.simone.atom.feed.server.entity.AtomCategory.Label;
 import se.uhr.simone.atom.feed.server.entity.AtomCategory.Term;
+import se.uhr.simone.atom.feed.utils.jdbc.JdbcTemplate;
+import se.uhr.simone.atom.feed.utils.jdbc.PersistenceException;
 
 @ExtendWith(DataSourceParameterResolver.class)
 public class AtomCategoryDAOTest {
@@ -48,7 +48,7 @@ public class AtomCategoryDAOTest {
 
 	@Test
 	public void connectEntryToCategoryShouldThrowExceptionWhenEntryDoesNotExist() {
-		assertThatExceptionOfType(DataIntegrityViolationException.class).isThrownBy(() -> {
+		assertThatExceptionOfType(PersistenceException.class).isThrownBy(() -> {
 			atomCategoryDAO.connectEntryToCategory(UUID.randomUUID().toString(),
 					AtomCategory.builder().withTerm(Term.of("term")).withLabel(Label.of("label")).build());
 		});

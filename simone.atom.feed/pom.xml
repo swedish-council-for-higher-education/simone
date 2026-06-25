@@ -11,16 +11,8 @@
     <properties>
         <version.jdom>1.0</version.jdom>
         <version.rome>1.0.0</version.rome>
-        <version.springframework>7.0.7</version.springframework>
     </properties>
     <dependencies>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-jdbc</artifactId>
-            <version>${version.springframework}</version>
-        </dependency>
-
         <dependency>
             <groupId>net.java.dev.rome</groupId>
             <artifactId>rome</artifactId>
