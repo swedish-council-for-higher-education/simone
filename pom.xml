@@ -16,7 +16,7 @@
         <maven.compiler.release>21</maven.compiler.release>
         <revision>6.1.0-SNAPSHOT</revision>
         <version.mockito>5.23.0</version.mockito>
-        <version.flyway>12.6.1</version.flyway>
+        <version.flyway>12.9.0</version.flyway>
     </properties>
 
     <scm>
